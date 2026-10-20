@@ -1,10 +1,10 @@
 name: Build iOS IPA
 on:
-  workflow_dispatch: # Allows you to manually trigger the build
+  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: macos-14 # Uses a GitHub-hosted Apple Silicon Mac cloud environment
+    runs-on: macos-14
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -14,9 +14,13 @@ jobs:
         with:
           targets: aarch64-apple-ios
 
+      - name: Setup Production Keys
+        run: |
+          # Creates the prod.keys file from your GitHub Secret
+          echo "${{ secrets.PROD_KEYS }}" > prod.keys
+
       - name: Run Build Script
         run: |
-          # Executes the repository's native iOS build configuration
           chmod +x ./make-ios.sh
           ./make-ios.sh --ipa
 
@@ -25,4 +29,3 @@ jobs:
         with:
           name: mush8-ios-ipa
           path: build/Mush8.ipa
-
